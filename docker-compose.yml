@@ -46,6 +46,7 @@ services:
       - /Users/farayola/Documents/MeiliSearchDataDir:/data.ms
     networks:
       - local-db-network
+    restart: unless-stopped
 
   mailhog-local:
     image: 'mailhog/mailhog:latest'
@@ -54,6 +55,7 @@ services:
       - '${FORWARD_MAILHOG_DASHBOARD_PORT:-8025}:8025'
     networks:
       - local-db-network
+    restart: unless-stopped
 
 networks:
   local-db-network:

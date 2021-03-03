@@ -1,0 +1,2 @@
+#[mysql]
+#innodb_lock_wait_timeout=60

@@ -8,4 +8,4 @@ RUN apt-get update && apt-get install -y nano
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copy our custom mysql configuration file into the image
-# COPY mysql.cnf /etc/mysql/conf.d/mysql.cnf
+COPY mysql.cnf /etc/mysql/conf.d/mysql.cnf

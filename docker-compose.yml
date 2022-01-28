@@ -10,23 +10,23 @@ services:
       # - /Users/farayola/Documents/MysqlDataDir:/var/lib/mysql
       - /Users/farayola/Documents/MysqlDataDirNew:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: "rootedmysql"
+      MYSQL_ROOT_PASSWORD: 'rootedmysql'
     ports:
-      - "3306:3306"
+      - '3306:3306'
     restart: unless-stopped
     networks:
       - local-db-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping"]
+      test: ['CMD', 'mysqladmin', 'ping']
 
   phpmyadmin-local:
     image: phpmyadmin/phpmyadmin:4.8
     environment:
-      PMA_HOST: "mysql-local-db"
+      PMA_HOST: 'mysql-local-db'
     networks:
       - local-db-network
     ports:
-      - "9999:80"
+      - '9999:80'
     restart: unless-stopped
 
   redis-local:
@@ -34,10 +34,10 @@ services:
     networks:
       - local-db-network
     ports:
-      - "6379:6379"
+      - '6379:6379'
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
 
   meilisearch-local:
     image: 'getmeili/meilisearch:v0.19.0'
@@ -57,6 +57,24 @@ services:
     networks:
       - local-db-network
     restart: unless-stopped
+
+  minio:
+    image: 'minio/minio:latest'
+    ports:
+      - '${FORWARD_MINIO_PORT:-9900}:9900'
+      - '${FORWARD_MINIO_CONSOLE_PORT:-8900}:8900'
+    environment:
+      MINIO_ROOT_USER: 'minio'
+      MINIO_ROOT_PASSWORD: 'password'
+    volumes:
+      - /Users/farayola/Documents/MinioDataDir:/data/minio
+    networks:
+      - local-db-network
+    command: minio server /data/minio --console-address ":8900"
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:9900/minio/health/live']
+      retries: 3
+      timeout: 5s
 
 networks:
   local-db-network:

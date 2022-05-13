@@ -82,12 +82,16 @@ services:
 volumes:
   mysql-data:
     name: 'mysql-data-volume'
+    driver: local
   redis-data:
     name: 'redis-data-volume'
+    driver: local
   meilisearch-data:
     name: 'meilisearch-data-volume'
+    driver: local
   minio-data:
     name: 'minio-data-volume'
+    driver: local
 
 networks:
   local-db-network:

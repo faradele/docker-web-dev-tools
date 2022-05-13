@@ -9,9 +9,9 @@ services:
       # - ${HOME}/DockerData/mysql-data:/var/lib/mysql
       - mysql-data:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: 'rootedmysql'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
     ports:
-      - '3306:3306'
+      - '3307:3306'
     restart: unless-stopped
     networks:
       - local-db-network

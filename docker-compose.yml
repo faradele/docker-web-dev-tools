@@ -6,8 +6,8 @@ services:
       context: .
     command: --default-authentication-plugin=mysql_native_password
     volumes:
-      # This should be changed to the proper folder or any folder of choice on target machine
-      - ${HOME}/DockerData/mysql-data:/var/lib/mysql
+      # - ${HOME}/DockerData/mysql-data:/var/lib/mysql
+      - mysql-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: 'rootedmysql'
     ports:
@@ -17,16 +17,6 @@ services:
       - local-db-network
     healthcheck:
       test: ['CMD', 'mysqladmin', 'ping']
-
-  phpmyadmin-local:
-    image: phpmyadmin/phpmyadmin:4.8
-    environment:
-      PMA_HOST: 'mysql-local-db'
-    networks:
-      - local-db-network
-    ports:
-      - '9999:80'
-    restart: unless-stopped
 
   redis-local:
     image: redis:6.0-alpine
@@ -39,11 +29,11 @@ services:
       test: ['CMD', 'redis-cli', 'ping']
 
   meilisearch-local:
-    image: 'getmeili/meilisearch:v0.19.0'
+    image: 'getmeili/meilisearch:latest'
     ports:
       - '${FORWARD_MEILISEARCH_PORT:-7700}:7700'
     volumes:
-      - ${HOME}/DockerData/meilisearch-data:/data.ms
+      - meilisearch-data:/data.ms
     networks:
       - local-db-network
     healthcheck:
@@ -70,7 +60,7 @@ services:
       MINIO_ROOT_USER: 'minio'
       MINIO_ROOT_PASSWORD: 'password'
     volumes:
-      - ${HOME}/DockerData/minio-data:/data/minio
+      - minio-data:/data/minio
     networks:
       - local-db-network
     command: minio server /data/minio --console-address ":8900"
@@ -78,6 +68,26 @@ services:
       test: ['CMD', 'curl', '-f', 'http://localhost:9000/minio/health/live']
       retries: 3
       timeout: 5s
+
+  # phpmyadmin-local:
+  #   image: phpmyadmin/phpmyadmin:4.8
+  #   environment:
+  #     PMA_HOST: 'mysql-local-db'
+  #   networks:
+  #     - local-db-network
+  #   ports:
+  #     - '9999:80'
+  #   restart: unless-stopped
+
+volumes:
+  mysql-data:
+    name: 'mysql-data-volume'
+  redis-data:
+    name: 'redis-data-volume'
+  meilisearch-data:
+    name: 'meilisearch-data-volume'
+  minio-data:
+    name: 'minio-data-volume'
 
 networks:
   local-db-network:

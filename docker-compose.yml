@@ -7,8 +7,7 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     volumes:
       # This should be changed to the proper folder or any folder of choice on target machine
-      # - /Users/farayola/Documents/MysqlDataDir:/var/lib/mysql
-      - /Users/farayola/Documents/MysqlDataDirNew:/var/lib/mysql
+      - ${HOME}/DockerData/mysql-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: 'rootedmysql'
     ports:
@@ -30,7 +29,7 @@ services:
     restart: unless-stopped
 
   redis-local:
-    image: redis:5.0
+    image: redis:6.0-alpine
     networks:
       - local-db-network
     ports:
@@ -44,9 +43,13 @@ services:
     ports:
       - '${FORWARD_MEILISEARCH_PORT:-7700}:7700'
     volumes:
-      - /Users/farayola/Documents/MeiliSearchDataDir:/data.ms
+      - ${HOME}/DockerData/meilisearch-data:/data.ms
     networks:
       - local-db-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--spider",  "http://localhost:7700/health"]
+      retries: 3
+      timeout: 5s
     restart: unless-stopped
 
   mailhog-local:
@@ -67,7 +70,7 @@ services:
       MINIO_ROOT_USER: 'minio'
       MINIO_ROOT_PASSWORD: 'password'
     volumes:
-      - /Users/farayola/Documents/MinioDataDir:/data/minio
+      - ${HOME}/DockerData/minio-data:/data/minio
     networks:
       - local-db-network
     command: minio server /data/minio --console-address ":8900"

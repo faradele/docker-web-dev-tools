@@ -9,9 +9,16 @@ services:
       # - ${HOME}/DockerData/mysql-data:/var/lib/mysql
       - mysql-data:/var/lib/mysql
     environment:
+      # MYSQL_ROOT_PASSWORD: password
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      # Setting this variable to '%' ensures that the container creates a mysql
+      # user (in this case, the root user) with the '%' sign as their host which means
+      # they are allowed to connect to the mysql server from ANY host.
+      # Not having this will lead to us getting 'cannot connect from xxx host' errors
+      # https://github.com/docker-library/mysql/issues/275#issuecomment-292208567
+      MYSQL_ROOT_HOST: '%'
     ports:
-      - '3307:3306'
+      - '3306:3306'
     restart: unless-stopped
     networks:
       - local-db-network
@@ -69,15 +76,15 @@ services:
       retries: 3
       timeout: 5s
 
-  # phpmyadmin-local:
-  #   image: phpmyadmin/phpmyadmin:4.8
-  #   environment:
-  #     PMA_HOST: 'mysql-local-db'
-  #   networks:
-  #     - local-db-network
-  #   ports:
-  #     - '9999:80'
-  #   restart: unless-stopped
+  #phpmyadmin-local:
+  #  image: phpmyadmin/phpmyadmin:4.8
+  #  environment:
+  #    PMA_HOST: 'mysql-local-db'
+  #  networks:
+  #    - local-db-network
+  #  ports:
+  #    - '9999:80'
+  #  restart: unless-stopped
 
 volumes:
   mysql-data:

@@ -4,6 +4,7 @@
 - PHPMyAdmin: 4.8
 - Meilisearch: latest
 - Mailhog: latest
+- Minio: latest
 
 ### Note: no guarantees of any kind provided
 
